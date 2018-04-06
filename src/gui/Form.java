@@ -13,6 +13,7 @@ import javax.swing.LayoutStyle;
  * @author Jonathan Shindler
  */
 public class Form extends JFrame {
+	private static final long serialVersionUID = 2402338395303039623L;
 	public Form() {
 		initComponents();
 	}

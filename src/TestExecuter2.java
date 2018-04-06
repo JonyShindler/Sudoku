@@ -1,14 +1,9 @@
 import static logic.SolverType.NORMAL;
 import static logic.SolverType.PERCENT;
-import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.junit.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,8 +15,6 @@ public class TestExecuter2 {
 	@Test
 	public void testTheBasicSudoku() {
 		// Given
-		Executor2 executer = new Executor2();
-		
 		SolverType solverType = NORMAL;
 		Map<Integer, Integer> mapOfInputValues = new HashMap<Integer, Integer>();
 		
@@ -62,7 +55,7 @@ public class TestExecuter2 {
 		mapOfInputValues.put(81, 4);
 		
 		// When
-		int[][] solutionGrid = executer.executeForPercentGrid(mapOfInputValues, null, solverType);
+		int[][] solutionGrid = Executor2.executeForPercentGrid(mapOfInputValues, null, solverType);
 		
 		// Then
 		int[] expectedRow1 = {7,9,6,8,5,4,3,2,1};
@@ -94,8 +87,6 @@ public class TestExecuter2 {
 	@Test
 	public void testSquigglySudoku() {
 		// Given
-		Executor2 executer = new Executor2();
-		
 		SolverType solverType = PERCENT;
 		Map<Integer, Integer> mapOfInputValues = new HashMap<Integer, Integer>();
 		Map<Integer, Integer> mapOfBoxPositions = new HashMap<Integer, Integer>();
@@ -238,7 +229,7 @@ public class TestExecuter2 {
 		mapOfBoxPositions.put(81,9);
 		
 		// When
-		int[][] solutionGrid = executer.executeForPercentGrid(mapOfInputValues, mapOfBoxPositions, solverType);
+		int[][] solutionGrid = Executor2.executeForPercentGrid(mapOfInputValues, mapOfBoxPositions, solverType);
 		
 		// Then
 		int[] expectedRow1 = {1,6,5,2,7,9,3,8,4};
