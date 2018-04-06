@@ -4,9 +4,6 @@ import java.util.Map;
 
 public class CreateBlankGrid {
 
-
-
-	
 	public static int[] createRowArray(Map<Integer, Integer> map) {
 
 		int realRow[] = new int[9];
