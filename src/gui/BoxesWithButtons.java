@@ -62,13 +62,13 @@ public class BoxesWithButtons extends JFrame {
 		x++;
 	}
 			//Solve the sudoku
-			int[][] solutionGrid = Executor2.execute(map);
+//			int[][] solutionGrid = Executor2.executeForStandardGrid(map);
 			
 			//Populate the GUI grid with the values from the solution grid.
 			int counter = 1;
 			for (int i = 0; i<=8; i++){
 				for (int j=0; j<=8; j++){
-					listOfFields.get(counter).setText(Integer.toString(solutionGrid[i][j]));
+//					listOfFields.get(counter).setText(Integer.toString(solutionGrid[i][j]));
 					counter ++;
 				}
 			}

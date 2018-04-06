@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,7 +10,15 @@ import java.util.Objects;
  * @author Jony
  *
  */
-public class GridAccessServices {
+public class GridAccessService {
+	
+	private HashMap<Integer, Integer> mapOfBoxPositions = new HashMap<>();
+	private SolverType solverType;
+	public GridAccessService(HashMap<Integer, Integer> mapOfBoxPositions, SolverType solverType){
+	this.mapOfBoxPositions = mapOfBoxPositions;	
+	this.solverType = solverType;
+	}
+	
 
 	/**
 	 * @param positionNumber
@@ -126,6 +135,9 @@ public class GridAccessServices {
 		int i = position.getiValue();
 		int j = position.getjValue();
 		
+		if (solverType == SolverType.PERCENT){
+			return findBoxForPercentSudoku(i, j);
+		}
 		return findBoxForStandard3x3BoxSudoku(i, j);
 	}
 
@@ -140,12 +152,20 @@ public class GridAccessServices {
 		//loop over all values in tables
 		int i,j=0;
 		List<Integer> listInBox= new ArrayList<Integer>();
+		int loopedBox;
 		
 		for (i=0; i<=8;i++){
 			for (j=0; j<=8;j++){
 
+				//evaluate the box
+				if (solverType == SolverType.PERCENT){
+					loopedBox = findBoxForPercentSudoku(i, j);
+				} else {
+					loopedBox = findBoxForStandard3x3BoxSudoku(i, j);
+				}
+				
 				//if they form part of the box, store the value in a list
-				if (findBoxForStandard3x3BoxSudoku(i, j)==currentBox){
+				if (loopedBox==currentBox){
 					int value = grid[i][j];
 					if (value !=0 ) {
 						listInBox.add(value);
@@ -157,6 +177,121 @@ public class GridAccessServices {
 
 		return listInBox;
 	}
+	
+	
+	private int findBoxForPercentSudoku(int i, int j){
+		int gridNumber = (9*i)+j+1;
+		return mapOfBoxPositions.get(gridNumber);
+	}
+
+	
+	
+	
+	private int findBoxForPercentSudokuHardCoded(int i, int j){
+		int gridNumber = (9*i)+j;
+		
+		switch (gridNumber+1){
+		//1
+		
+		case 1  :	return 1;
+		case 2  :	return 1; 
+		case 3  :   return 2; 
+		case 4  :   return 2; 
+		case 5  :   return 2; 
+		case 6  :   return 2; 
+		case 7  :   return 2; 
+		case 8  :   return 3; 
+		case 9  :   return 3;
+		//2
+		case 10 :   return 1; 
+		case 11 :   return 1; 
+		case 12 :   return 1; 
+		case 13 :   return 2; 
+		case 14 :   return 2; 
+		case 15 :   return 2; 
+		case 16 :   return 2; 
+		case 17 :   return 3; 
+		case 18 :   return 3; 
+		//3
+		case 19 :   return 4; 
+		case 20 :   return 1; 
+		case 21 :   return 5; 
+		case 22 :   return 5; 
+		case 23 :   return 5; 
+		case 24 :   return 6; 
+		case 25 :   return 3; 
+		case 26 :   return 3; 
+		case 27 :   return 3; 
+		//4
+		case 28 :   return 4; 
+		case 29 :   return 1; 
+		case 30 :   return 1; 
+		case 31 :   return 1; 
+		case 32 :   return 5; 
+		case 33 :   return 6; 
+		case 34 :   return 6; 
+		case 35 :   return 3; 
+		case 36 :   return 3; 
+		//5
+		case 37 :   return 4; 
+		case 38 :   return 4; 
+		case 39 :   return 4; 
+		case 40 :   return 4; 
+		case 41 :   return 5; 
+		case 42 :   return 6; 
+		case 43 :   return 6; 
+		case 44 :   return 6; 
+		case 45 :   return 6; 
+		//6
+		case 46 :   return 7; 
+		case 47 :   return 7; 
+		case 48 :   return 4; 
+		case 49 :   return 4; 
+		case 50 :   return 5; 
+		case 51 :   return 9; 
+		case 52 :   return 9; 
+		case 53 :   return 9; 
+		case 54 :   return 6; 
+		//7
+		case 55 :   return 7; 
+		case 56 :   return 7; 
+		case 57 :   return 7; 
+		case 58 :   return 4; 
+		case 59 :   return 5; 
+		case 60 :   return 5; 
+		case 61 :   return 5; 
+		case 62 :   return 9; 
+		case 63 :   return 6; 
+		//8
+		case 64 :   return 7; 
+		case 65 :   return 7; 
+		case 66 :   return 8; 
+		case 67 :   return 8; 
+		case 68 :   return 8; 
+		case 69 :   return 8; 
+		case 70 :   return 9; 
+		case 71 :   return 9; 
+		case 72 :   return 9; 
+		//9
+		case 73 :   return 7; 
+		case 74 :   return 7; 
+		case 75 :   return 8; 
+		case 76 :   return 8; 
+		case 77 :   return 8; 
+		case 78 :   return 8; 
+		case 79 :   return 8; 
+		case 80 :   return 9; 
+		case 81 :   return 9; 
+
+		
+		
+			
+		}
+		
+		return mapOfBoxPositions.get(gridNumber);
+	}
+	
+	
 	
 	
 	/**

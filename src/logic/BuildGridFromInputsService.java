@@ -5,7 +5,7 @@ import static logic.CreateBlankGrid.createRowArray;
 import java.util.HashMap;
 import java.util.Map;
 
-import logic.GridAccessServices.GridPosition;
+import logic.GridAccessService.GridPosition;
 
 /**
  *
@@ -64,9 +64,9 @@ public class BuildGridFromInputsService {
 		
 		for (Map.Entry<Integer, Integer> entry : map.entrySet()){
 			//calculate the grid position of each of the keys.
-			GridPosition position = GridAccessServices.calculateGridPositionOfGridNumber(entry.getKey());
+			GridPosition position = GridAccessService.calculateGridPositionOfGridNumber(entry.getKey());
 			//add the value to the just found grid position;
-			grid = GridAccessServices.addNumberToGrid(position, entry.getValue(), grid);
+			grid = GridAccessService.addNumberToGrid(position, entry.getValue(), grid);
 			
 		}
 		return grid;
@@ -129,6 +129,54 @@ public class BuildGridFromInputsService {
 		
 		row8Map = new HashMap<Integer, Integer>();
 		row8Map.put(6, 9);
+	}
+	
+	
+	/**
+	 * Hard codes input values into the grid for the percent sudoku.
+	 */
+	public static void inputValuesIntoRowsForPercentExample(){
+		row0Map = new HashMap<Integer, Integer>();
+		row0Map.put(1, 3);
+		row0Map.put(3, 8);
+		
+		row1Map = new HashMap<Integer, Integer>();
+		row1Map.put(1, 9);
+		row1Map.put(4, 6);
+		row1Map.put(6, 5);
+		
+		row2Map = new HashMap<Integer, Integer>();
+		row2Map.put(2, 9);
+		row2Map.put(5, 7);
+		row2Map.put(7, 3);
+		
+		row3Map = new HashMap<Integer, Integer>();
+		row3Map.put(2, 7);
+		
+		row4Map = new HashMap<Integer, Integer>();
+		row4Map.put(0, 7);
+		row4Map.put(2, 8);
+		row4Map.put(3, 6);
+		row4Map.put(5, 5);
+		row4Map.put(6, 1);
+		row4Map.put(8, 3);
+		
+		row5Map = new HashMap<Integer, Integer>();
+		row5Map.put(6, 4);
+		
+		row6Map = new HashMap<Integer, Integer>();
+		row6Map.put(1, 1);
+		row6Map.put(3, 9);
+		row6Map.put(6, 8);
+		
+		row7Map = new HashMap<Integer, Integer>();
+		row7Map.put(2, 5);
+		row7Map.put(4, 1);
+		row7Map.put(7, 8);
+		
+		row8Map = new HashMap<Integer, Integer>();
+		row8Map.put(5, 3);
+		row8Map.put(7, 5);
 	}
 	
 	

@@ -1,8 +1,9 @@
 package logic;
 
+import java.util.HashMap;
 import java.util.List;
 
-import logic.GridAccessServices.GridPosition;
+import logic.GridAccessService.GridPosition;
 
 /**
  * 
@@ -11,10 +12,11 @@ import logic.GridAccessServices.GridPosition;
  *
  */
 public class ValidValueService {
-	GridAccessServices gridServices = new GridAccessServices();
+	private final GridAccessService gridServices;
+	
 	//Constructor
-	public ValidValueService(){
-		
+	public ValidValueService(GridAccessService gridServices){
+		this.gridServices = gridServices;
 	}
 	
 	/**
@@ -129,6 +131,8 @@ public class ValidValueService {
 	
 	
 	/**
+	 * Returns the lowest valid number to go in a specified grid position
+	 * 
 	 * @param i
 	 * @param j
 	 * @param proposedValue

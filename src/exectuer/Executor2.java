@@ -4,13 +4,16 @@ import java.util.HashMap;
 
 import javax.swing.JFrame;
 
+import gui.BoxesWith3ButtonsForMultiEntry;
+import gui.BoxesWith9Buttons;
 import gui.BoxesWithButtons;
 import gui.Outputter;
 import gui.PrinterService;
 import logic.BuildGridFromInputsService;
-import logic.GridAccessServices;
-import logic.GridAccessServices.GridPosition;
+import logic.GridAccessService;
+import logic.GridAccessService.GridPosition;
 import logic.SolverService;
+import logic.SolverType;
 import logic.ValidValueService;
 
 /**
@@ -22,6 +25,7 @@ import logic.ValidValueService;
 public class Executor2 {
 
 	private static final BuildGridFromInputsService buildGridFromInputsService = new BuildGridFromInputsService();
+	private static final SolverService solverService = new SolverService();
 	private static JFrame frame;
 	
 	/**
@@ -30,36 +34,27 @@ public class Executor2 {
 	public static void main(String[] args) {
 		
 		//Create a 9 x 9 GUI of boxes.
-		  frame = new BoxesWithButtons();
+		  frame = new BoxesWith3ButtonsForMultiEntry();
 		  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		  frame.setVisible(true);
-		  frame.setSize(220,320);
+		  frame.setSize(400,400);
 		  frame.setResizable(false);
-		  
-//		  int [][] solutionGrid = new int[9][9];
-//		  int frameXLocation = frame.getX() + frame.getWidth();
-//		  int frameYLocation = frame.getY();
-		  
 	}
 
+	
 	/**
-	 * @param map A map of box numbers to the values in those box numbers
-	 * @return the solution to the puzzle.
+	 * Solve the inputted grid(either for hard coded or GUI, print to the console and return the solution grid.
+	 * @param mapOfInputValues
+	 * @param mapOfBoxPositions
+	 * @return
 	 */
-	public static int[][] execute(HashMap<Integer, Integer> map) {
+	public static int[][] executeForPercentGrid(HashMap<Integer, Integer> mapOfInputValues, HashMap<Integer, Integer> mapOfBoxPositions, SolverType solverType) {
 		int [][] inputtedGrid = new int[9][9];
 		int [][] workingGrid = new int[9][9];
 		int [][] solutionGrid = new int[9][9];
-
-		//Inputted grid is the starter grid which never changes
-		//Working grid is the grid that is iterated over to find the final result
-		//at this point both grids are the same but we need to have to identical independent grids but with different pointers..
 		
-		solutionGrid = solveForGUI(map, inputtedGrid, workingGrid);
-		
-//		solutionGrid = solveForHardCoded(inputtedGrid);
-		
-		//TODO if it is already complete then do nothing.
+		solutionGrid = solveForGUI(mapOfInputValues, inputtedGrid, workingGrid, mapOfBoxPositions, solverType);
+//		solutionGrid = solveForHardCoded(solverType);
 		
 		//Output result to the console
 		PrinterService.printToConsole(solutionGrid);
@@ -68,22 +63,28 @@ public class Executor2 {
 		return solutionGrid;
 	}
 
-	private static int[][] solveForHardCoded(int[][] inputtedGrid) {
-		int[][] solutionGrid;
+	//This was only used for local testing. Unit tests would be better.
+	private static int[][] solveForHardCoded(SolverType solverType) {
+		HashMap<Integer, Integer> mapOfBoxPositions = new HashMap<>();
+		int [][] inputtedGrid = new int[9][9];
+		int [][] practiceGrid = new int[9][9];
+		int [][] solutionGrid;
 		//solve it for hard coded
-		  int [][] practiceGrid = new int[9][9];
-		  BuildGridFromInputsService.inputValuesIntoRowsForSimpleCase();
+		  BuildGridFromInputsService.inputValuesIntoRowsForPercentExample();
 		  practiceGrid = BuildGridFromInputsService.fillGridWithValuesFromRows(practiceGrid);
-		  solutionGrid = SolverService.solveSudoku(practiceGrid, inputtedGrid);
+		  inputtedGrid = BuildGridFromInputsService.fillGridWithValuesFromRows(inputtedGrid);
+		  solutionGrid = solverService.solveSudoku(practiceGrid, inputtedGrid, mapOfBoxPositions, solverType);
 		return solutionGrid;
 	}
 
-	private static int[][] solveForGUI(HashMap<Integer, Integer> map, int[][] inputtedGrid, int[][] workingGrid) {
+	
+	private static int[][] solveForGUI(HashMap<Integer, Integer> map, int[][] inputtedGrid, 
+			int[][] workingGrid, HashMap<Integer, Integer> mapOfBoxPositions, SolverType solverType) {
 		int[][] solutionGrid;
 		//solve it properly
 		inputtedGrid = BuildGridFromInputsService.inputValuesIntoRowsFromInputter(map, inputtedGrid);
 		workingGrid = BuildGridFromInputsService.inputValuesIntoRowsFromInputter(map, workingGrid);
-		solutionGrid = SolverService.solveSudoku(workingGrid, inputtedGrid);
+		solutionGrid = solverService.solveSudoku(workingGrid, inputtedGrid, mapOfBoxPositions, solverType);
 		return solutionGrid;
 	}
 

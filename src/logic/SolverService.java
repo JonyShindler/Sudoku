@@ -1,6 +1,15 @@
 package logic;
 
-import logic.GridAccessServices.GridPosition;
+import java.util.HashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import logic.GridAccessService.GridPosition;
 
 /**
  * 
@@ -11,18 +20,57 @@ import logic.GridAccessServices.GridPosition;
 public class SolverService {
 
 	private static final GridPosition startPosition = new GridPosition(0, 0);
-	private static final ValidValueService validValueService = new ValidValueService();
-	private static final GridAccessServices gridServices = new GridAccessServices();
+	
+	public int[][] solveSudoku(int[][] knownSafeGrid, 
+							  int[][] initialGrid, 
+							  HashMap<Integer, Integer> mapOfBoxPositions, 
+							  SolverType solverType) {
+
+	ExecutorService executor = Executors.newSingleThreadExecutor();
+	Future<int[][]> future = executor.submit(new Task(knownSafeGrid, initialGrid, mapOfBoxPositions, solverType));
+
+		try {
+		return future.get(1, TimeUnit.SECONDS);
+		} catch (TimeoutException e) {
+			return null;
+		} catch (InterruptedException e) {
+			return null;
+		} catch (ExecutionException e) {
+			return null;
+		}
+	}
+	
+	class Task implements Callable<int[][]> {
+		int[][] knownSafeGrid;
+		int[][] initialGrid;
+		HashMap<Integer, Integer> mapOfBoxPositions;
+		SolverType solverType;
+		
+		Task(int[][] knownSafeGrid, int[][] initialGrid, HashMap<Integer, Integer> mapOfBoxPositions, SolverType solverType){
+			this.knownSafeGrid = knownSafeGrid;
+			this.initialGrid = initialGrid;
+			this.mapOfBoxPositions = mapOfBoxPositions;
+			this.solverType = solverType;
+		}
+		
+	    @Override
+	    public int[][] call() throws TimeoutException {
+			return solveSudokuPrivate(knownSafeGrid, initialGrid, mapOfBoxPositions, solverType);
+	    }
+	}
 	
 	/**
 	 * Solves the sudoku puzzle given a starter grid
 	 * @param knownSafeGrid - the starting grid
 	 * @param initialGrid - the grid to iterate over (is the same as the other one
+	 * @param mapOfBoxPositions - the map of box positions (for solving)
 	 * @return the solved grid
 	 */
-	public static int[][] solveSudoku(int[][] knownSafeGrid, int[][] initialGrid) {
+	public static int[][] solveSudokuPrivate(int[][] knownSafeGrid, int[][] initialGrid, HashMap<Integer, Integer> mapOfBoxPositions, SolverType solverType) {
+		final GridAccessService gridServices = new GridAccessService(mapOfBoxPositions, solverType);
+		final ValidValueService validValueService = new ValidValueService(gridServices);
 		int i,j=0;
-		int proposedValue=0;
+		int proposedValue=1;
 	
 		//need to use the new grid each time.
 		for (i=0; i<=8;i++){
@@ -43,7 +91,7 @@ public class SolverService {
 						i = previousPosition.getiValue();
 						j = previousPosition.getjValue();
 						int previousPositionValue = knownSafeGrid[i][j];
-						
+					
 						//if the value in the cell of the current position is the same as the input grid, then we cannot change it
 						if (knownSafeGrid[i][j] == initialGrid[i][j]){
 							continue;
