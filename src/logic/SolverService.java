@@ -1,12 +1,11 @@
 package logic;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import logic.GridAccessService.GridPosition;
@@ -19,34 +18,31 @@ import logic.GridAccessService.GridPosition;
  */
 public class SolverService {
 
-	private static final GridPosition startPosition = new GridPosition(0, 0);
+	private static final GridPosition START_POSITION = new GridPosition(0, 0);
 	
 	public int[][] solveSudoku(int[][] knownSafeGrid, 
 							  int[][] initialGrid, 
 							  Map<Integer, Integer> mapOfBoxPositions, 
 							  SolverType solverType) {
 
-	ExecutorService executor = Executors.newSingleThreadExecutor();
-	Future<int[][]> future = executor.submit(new Task(knownSafeGrid, initialGrid, mapOfBoxPositions, solverType));
+		SolverTask solverTask = new SolverTask(knownSafeGrid, initialGrid, mapOfBoxPositions, solverType);
 
+		// Try and solve the sudoku within 1 second.
 		try {
-		return future.get(1, TimeUnit.SECONDS);
-		} catch (TimeoutException e) {
-			return null;
-		} catch (InterruptedException e) {
-			return null;
-		} catch (ExecutionException e) {
-			return null;
+		return Executors.newSingleThreadExecutor().submit(solverTask).get(1, SECONDS);
+		} catch (TimeoutException e) { return null;
+		} catch (InterruptedException e) { return null;
+		} catch (ExecutionException e) { return null;
 		}
 	}
 	
-	class Task implements Callable<int[][]> {
+	class SolverTask implements Callable<int[][]> {
 		int[][] knownSafeGrid;
 		int[][] initialGrid;
 		Map<Integer, Integer> mapOfBoxPositions;
 		SolverType solverType;
 		
-		Task(int[][] knownSafeGrid, int[][] initialGrid, Map<Integer, Integer> mapOfBoxPositions, SolverType solverType){
+		SolverTask(int[][] knownSafeGrid, int[][] initialGrid, Map<Integer, Integer> mapOfBoxPositions, SolverType solverType){
 			this.knownSafeGrid = knownSafeGrid;
 			this.initialGrid = initialGrid;
 			this.mapOfBoxPositions = mapOfBoxPositions;
@@ -104,7 +100,7 @@ public class SolverService {
 						
 						proposedValue = validValueService.findLowestValue(i, j, proposedValue, validValueService, knownSafeGrid, previousPositionValue+1);
 						if (proposedValue == 0) {
-							if (previousPosition != startPosition){
+							if (previousPosition != START_POSITION){
 								knownSafeGrid[i][j] = 0;
 							}
 						} else {
