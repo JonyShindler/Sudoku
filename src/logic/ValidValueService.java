@@ -26,7 +26,9 @@ public class ValidValueService {
 	 * @return true is the proposed value is valid
 	 */
 	public boolean isValid(int proposedValue, int xValue, int yValue, int[][] grid){
-		return isRowValid(proposedValue, xValue, yValue, grid) && isColumnValid(proposedValue, xValue, yValue, grid) && isBoxValid(proposedValue, xValue, yValue, grid);
+		return isRowValid(proposedValue, xValue, yValue, grid)
+			&& isColumnValid(proposedValue, xValue, yValue, grid)
+			&& isBoxValid(proposedValue, xValue, yValue, grid);
 	}
 
 	
@@ -65,7 +67,6 @@ public class ValidValueService {
 	 * @return true if the proposed value is valid based on the current row
 	 */
 	private boolean isRowValid(int proposedValue, int xValue, int yValue, int[][] grid){
-		
 		int row[] = grid[yValue];
 		int i=0;
 		
@@ -86,12 +87,7 @@ public class ValidValueService {
 	 * @return true if the propsed value is valid based on the current column
 	 */
 	private boolean isColumnValid(int proposedValue, int xValue, int yValue, int[][] grid){
-		
-		//for each row, take the first value and store it in the column
-		//we will defintely make a service to do this properly
-		//also get some Junit tests going as shit is gonna start getting harder soon.
-		//instead of making a service just make a grid class with getters and setters for rows and columns
-		
+		// For each row, take the first value and store it in the column
 		int column[] = new int[9];
 		
 		for (int i=0;i<9;i++){
@@ -119,13 +115,12 @@ public class ValidValueService {
 	private boolean isBoxValid(int proposedValue, int xValue, int yValue, int[][] grid){
 
 		GridPosition position = new GridPosition(yValue, xValue);
-		//work out which box the grid position is in
+		// Work out which box the grid position is in
 		int currentBox = gridServices.findBoxCurrentPositionIsIn(position);
-		//then find the list of all numbers that are currently in the box
+		// Then find the list of all numbers that are currently in the box
 		List<Integer> listInBox = gridServices.findValuesInCurrentBox(currentBox, grid);
-		//then return true if the proposed value is valid (i.e. it does not exist in the box)
+		// Then return true if the proposed value is valid (i.e. it does not exist in the box)
 		return !listInBox.contains(proposedValue);
-		
 	}
 	
 	
@@ -140,11 +135,10 @@ public class ValidValueService {
 	 * @param startNumber
 	 * @return the lowest valid number to go in a grid position
 	 */
-	public int findLowestValue(int i, int j, int proposedValue, ValidValueService valueValidService,
-			int[][] knownSafeGrid, int startNumber) {
-		//work out which is the lowest number that we can out in here.
+	public int findLowestValue(int i, int j, int proposedValue, ValidValueService valueValidService, int[][] knownSafeGrid, int startNumber) {
+		// Work out which is the lowest number that we can out in here.
 		for (int x=startNumber; x<=9; x++){
-			//if the number is valid then set this as the proposed value
+			// If the number is valid then set this as the proposed value
 			if (valueValidService.isValid(x, j, i, knownSafeGrid)){
 				return proposedValue = x;
 			}

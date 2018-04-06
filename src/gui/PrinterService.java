@@ -12,7 +12,7 @@ public class PrinterService {
 	 * @param row
 	 */
 	private static void printRowWithLines(int[] row) {
-		// take each element in the row and print it and then print a tab.
+		// Take each element in the row and print it and then print a tab.
 		int counter = 0;
 		for (int i : row) {
 			

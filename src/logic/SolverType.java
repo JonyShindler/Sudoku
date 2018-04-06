@@ -14,7 +14,6 @@ public enum SolverType {
 	NORMAL,
 	
 	
-	
 	/**
 	 * 9x9 sudoku with non-regular boxes 
 	 */

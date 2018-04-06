@@ -68,18 +68,18 @@ public class SolverService {
 		int i,j=0;
 		int proposedValue=1;
 	
-		//need to use the new grid each time.
+		// Need to use the new grid each time.
 		for (i=0; i<=8;i++){
 			for (j=0; j<=8;j++){
 				
-				// if a cell is empty then we can put a number in it
+				// If a cell is empty then we can put a number in it
 				if(validValueService.isEmpty(j, i, knownSafeGrid)){
-					//find the lowest valid value to put in the current box
+					// Find the lowest valid value to put in the current box
 					proposedValue = validValueService.findLowestValue(i, j, proposedValue, validValueService, knownSafeGrid, 1);
-					//add the proposed value to the grid
+					// Add the proposed value to the grid
 					knownSafeGrid[i][j] = proposedValue;
 				}
-					//If there was no valid match then backtrack and change the previous number
+					// If there was no valid match then backtrack and change the previous number
 					while (proposedValue==0){
 						
 						GridPosition currentPosition = new GridPosition(i, j);
@@ -88,12 +88,12 @@ public class SolverService {
 						j = previousPosition.getjValue();
 						int previousPositionValue = knownSafeGrid[i][j];
 					
-						//if the value in the cell of the current position is the same as the input grid, then we cannot change it
+						// If the value in the cell of the current position is the same as the input grid, then we cannot change it
 						if (knownSafeGrid[i][j] == initialGrid[i][j]){
 							continue;
 						}
 						
-						//this means we have expired all options so set the value to 0 so it can get overwritten
+						// This means we have expired all options so set the value to 0 so it can get overwritten
 						if (previousPositionValue == 9){
 							knownSafeGrid[i][j] = 0;
 						}

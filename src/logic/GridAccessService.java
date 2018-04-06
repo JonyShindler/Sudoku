@@ -15,9 +15,10 @@ public class GridAccessService {
 	
 	private Map<Integer, Integer> mapOfBoxPositions = new HashMap<>();
 	private SolverType solverType;
+	
 	public GridAccessService(Map<Integer, Integer> mapOfBoxPositions, SolverType solverType){
-	this.mapOfBoxPositions = mapOfBoxPositions;	
-	this.solverType = solverType;
+		this.mapOfBoxPositions = mapOfBoxPositions;	
+		this.solverType = solverType;
 	}
 	
 
@@ -34,7 +35,7 @@ public class GridAccessService {
 			x=8;
 		}
 		// x and y can only be between 1 and 9
-		//so if we divide position number by 9 and round down we can get the row numbeR?
+		// So if we divide position number by 9 and round down we can get the row number.
 		
 		GridPosition position = new GridPosition((int)x, (int)y);
 		

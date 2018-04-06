@@ -19,9 +19,9 @@ public class BuildGridFromInputsService {
 	public static int[][] inputValuesIntoRowsFromInputter(Map<Integer, Integer> map, int[][] grid){
 		
 		for (Map.Entry<Integer, Integer> entry : map.entrySet()){
-			//calculate the grid position of each of the keys.
+			// Calculate the grid position of each of the keys.
 			GridPosition position = GridAccessService.calculateGridPositionOfGridNumber(entry.getKey());
-			//add the value to the just found grid position;
+			// Add the value to the just found grid position;
 			grid = GridAccessService.addNumberToGrid(position, entry.getValue(), grid);
 			
 		}
