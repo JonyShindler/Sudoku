@@ -13,16 +13,16 @@ import java.util.List;
 
 import javax.swing.*;
 
-import exectuer.Executor2;
-import logic.ValidValueService;
-
-
 
 /**
  * @author Jonathan Shindler
  */
 public class BoxesWithButtons extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -795140848721571527L;
 	JPanel panel = new JPanel();
 	public BoxesWithButtons() {
 		counter = 1;
@@ -65,7 +65,7 @@ public class BoxesWithButtons extends JFrame {
 //			int[][] solutionGrid = Executor2.executeForStandardGrid(map);
 			
 			//Populate the GUI grid with the values from the solution grid.
-			int counter = 1;
+//			int counter = 1;
 			for (int i = 0; i<=8; i++){
 				for (int j=0; j<=8; j++){
 //					listOfFields.get(counter).setText(Integer.toString(solutionGrid[i][j]));

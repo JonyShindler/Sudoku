@@ -3,6 +3,7 @@ package logic;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -12,9 +13,9 @@ import java.util.Objects;
  */
 public class GridAccessService {
 	
-	private HashMap<Integer, Integer> mapOfBoxPositions = new HashMap<>();
+	private Map<Integer, Integer> mapOfBoxPositions = new HashMap<>();
 	private SolverType solverType;
-	public GridAccessService(HashMap<Integer, Integer> mapOfBoxPositions, SolverType solverType){
+	public GridAccessService(Map<Integer, Integer> mapOfBoxPositions, SolverType solverType){
 	this.mapOfBoxPositions = mapOfBoxPositions;	
 	this.solverType = solverType;
 	}

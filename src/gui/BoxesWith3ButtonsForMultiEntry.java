@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -27,6 +28,8 @@ import logic.SolverType;
  */
 public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 
+	private static final long serialVersionUID = 8062529169928860855L;
+	
 	JPanel panel = new JPanel();
 	private JButton solveButton;
 	private JLabel alertLabel;
@@ -37,7 +40,7 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 	private JButton enterPositionButton;
 	private boolean coloursEntered = false;
 	private String alert = "";
-	private HashMap<Integer, Integer> mapOfInputValues = new HashMap<Integer, Integer>();
+	private Map<Integer, Integer> mapOfInputValues = new HashMap<Integer, Integer>();
 	private JCheckBox isPercentCheckbox = new JCheckBox();
 	private SolverType solverType = SolverType.NORMAL;
 

@@ -1,20 +1,14 @@
 package exectuer;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JFrame;
 
 import gui.BoxesWith3ButtonsForMultiEntry;
-import gui.BoxesWith9Buttons;
-import gui.BoxesWithButtons;
-import gui.Outputter;
 import gui.PrinterService;
 import logic.BuildGridFromInputsService;
-import logic.GridAccessService;
-import logic.GridAccessService.GridPosition;
 import logic.SolverService;
 import logic.SolverType;
-import logic.ValidValueService;
 
 /**
  *
@@ -32,7 +26,6 @@ public class Executor2 {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
 		//Create a 9 x 9 GUI of boxes.
 		  frame = new BoxesWith3ButtonsForMultiEntry();
 		  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -48,7 +41,7 @@ public class Executor2 {
 	 * @param mapOfBoxPositions
 	 * @return
 	 */
-	public static int[][] executeForPercentGrid(HashMap<Integer, Integer> mapOfInputValues, HashMap<Integer, Integer> mapOfBoxPositions, SolverType solverType) {
+	public static int[][] executeForPercentGrid(Map<Integer, Integer> mapOfInputValues, Map<Integer, Integer> mapOfBoxPositions, SolverType solverType) {
 		int [][] inputtedGrid = new int[9][9];
 		int [][] workingGrid = new int[9][9];
 		int [][] solutionGrid = new int[9][9];
@@ -63,23 +56,23 @@ public class Executor2 {
 		return solutionGrid;
 	}
 
-	//This was only used for local testing. Unit tests would be better.
-	private static int[][] solveForHardCoded(SolverType solverType) {
-		HashMap<Integer, Integer> mapOfBoxPositions = new HashMap<>();
-		int [][] inputtedGrid = new int[9][9];
-		int [][] practiceGrid = new int[9][9];
-		int [][] solutionGrid;
-		//solve it for hard coded
-		  BuildGridFromInputsService.inputValuesIntoRowsForPercentExample();
-		  practiceGrid = BuildGridFromInputsService.fillGridWithValuesFromRows(practiceGrid);
-		  inputtedGrid = BuildGridFromInputsService.fillGridWithValuesFromRows(inputtedGrid);
-		  solutionGrid = solverService.solveSudoku(practiceGrid, inputtedGrid, mapOfBoxPositions, solverType);
-		return solutionGrid;
-	}
+//	//This was only used for local testing. Unit tests would be better.
+//	private static int[][] solveForHardCoded(SolverType solverType) {
+//		Map<Integer, Integer> mapOfBoxPositions = new HashMap<>();
+//		int [][] inputtedGrid = new int[9][9];
+//		int [][] practiceGrid = new int[9][9];
+//		int [][] solutionGrid;
+//		//solve it for hard coded
+//		  BuildGridFromInputsService.inputValuesIntoRowsForPercentExample();
+//		  practiceGrid = BuildGridFromInputsService.fillGridWithValuesFromRows(practiceGrid);
+//		  inputtedGrid = BuildGridFromInputsService.fillGridWithValuesFromRows(inputtedGrid);
+//		  solutionGrid = solverService.solveSudoku(practiceGrid, inputtedGrid, mapOfBoxPositions, solverType);
+//		return solutionGrid;
+//	}
 
 	
-	private static int[][] solveForGUI(HashMap<Integer, Integer> map, int[][] inputtedGrid, 
-			int[][] workingGrid, HashMap<Integer, Integer> mapOfBoxPositions, SolverType solverType) {
+	private static int[][] solveForGUI(Map<Integer, Integer> map, int[][] inputtedGrid, 
+			int[][] workingGrid, Map<Integer, Integer> mapOfBoxPositions, SolverType solverType) {
 		int[][] solutionGrid;
 		//solve it properly
 		inputtedGrid = BuildGridFromInputsService.inputValuesIntoRowsFromInputter(map, inputtedGrid);

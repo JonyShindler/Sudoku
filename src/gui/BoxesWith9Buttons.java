@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.swing.*;
 
-import exectuer.Executor2;
 
 
 
@@ -22,6 +21,10 @@ import exectuer.Executor2;
  */
 public class BoxesWith9Buttons extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3137168723242829936L;
 	JPanel panel = new JPanel();
 	public BoxesWith9Buttons() {
 		counter = 1;

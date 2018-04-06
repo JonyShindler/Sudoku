@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -23,7 +24,7 @@ public class SolverService {
 	
 	public int[][] solveSudoku(int[][] knownSafeGrid, 
 							  int[][] initialGrid, 
-							  HashMap<Integer, Integer> mapOfBoxPositions, 
+							  Map<Integer, Integer> mapOfBoxPositions, 
 							  SolverType solverType) {
 
 	ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -43,10 +44,10 @@ public class SolverService {
 	class Task implements Callable<int[][]> {
 		int[][] knownSafeGrid;
 		int[][] initialGrid;
-		HashMap<Integer, Integer> mapOfBoxPositions;
+		Map<Integer, Integer> mapOfBoxPositions;
 		SolverType solverType;
 		
-		Task(int[][] knownSafeGrid, int[][] initialGrid, HashMap<Integer, Integer> mapOfBoxPositions, SolverType solverType){
+		Task(int[][] knownSafeGrid, int[][] initialGrid, Map<Integer, Integer> mapOfBoxPositions, SolverType solverType){
 			this.knownSafeGrid = knownSafeGrid;
 			this.initialGrid = initialGrid;
 			this.mapOfBoxPositions = mapOfBoxPositions;
@@ -66,7 +67,7 @@ public class SolverService {
 	 * @param mapOfBoxPositions - the map of box positions (for solving)
 	 * @return the solved grid
 	 */
-	public static int[][] solveSudokuPrivate(int[][] knownSafeGrid, int[][] initialGrid, HashMap<Integer, Integer> mapOfBoxPositions, SolverType solverType) {
+	public static int[][] solveSudokuPrivate(int[][] knownSafeGrid, int[][] initialGrid, Map<Integer, Integer> mapOfBoxPositions, SolverType solverType) {
 		final GridAccessService gridServices = new GridAccessService(mapOfBoxPositions, solverType);
 		final ValidValueService validValueService = new ValidValueService(gridServices);
 		int i,j=0;
