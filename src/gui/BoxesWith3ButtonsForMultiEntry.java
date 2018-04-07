@@ -19,12 +19,16 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import exectuer.Executor2;
+import exectuer.SudokuSolver;
 import logic.GridAccessService;
 import logic.SolverType;
 
 /**
  * @author Jonathan Shindler
+ */
+/**
+ * @author Jony
+ *
  */
 public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 
@@ -35,26 +39,28 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 	private JLabel alertLabel;
 	private static List<JTextField> listOfFields;
 	private static int counter;
-	private HashMap<Integer, Integer> mapOfBoxLocations;
+	private Map<Integer, Integer> boxLocations = new HashMap<Integer, Integer>();
 	private JButton clearButton;
 	private JButton enterPositionButton;
 	private boolean coloursEntered = false;
 	private String alert = "";
-	private Map<Integer, Integer> mapOfInputValues = new HashMap<Integer, Integer>();
+	private Map<Integer, Integer> inputValues = new HashMap<Integer, Integer>();
 	private JCheckBox isPercentCheckbox = new JCheckBox();
 	private SolverType solverType = SolverType.NORMAL;
 
+	/**
+	 * Initialised all the boxes and sets their colour to the alternating grey pattern.
+	 */
 	public BoxesWith3ButtonsForMultiEntry() {
 		counter = 1;
 		listOfFields = new ArrayList<JTextField>();
-		GridAccessService gridAccessService = new GridAccessService(null, solverType);
 		
 		for (int i = 1; i <= 82; i++) {
 			JTextField textField = new JTextField();
 			textField.getDocument().addDocumentListener(new ChangeColourDocumentListener(textField));
 			
 			//as we make them we want to define their colour...
-			int currentBox = gridAccessService.findBoxCurrentPositionIsIn(GridAccessService.calculateGridPositionOfGridNumber(i-1));
+			int currentBox = GridAccessService.findBoxNumber(i-1, solverType, boxLocations);
 			if (currentBox == 1 || currentBox == 3 || currentBox == 5 || currentBox == 7 || currentBox == 9){
 				textField.setBackground(Color.LIGHT_GRAY);
 			}
@@ -67,75 +73,59 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 	}
 
 	
+	/**
+	 * Updates the colours of the UI boxes for the percent sudoku.
+	 */
 	class ChangeColourDocumentListener implements DocumentListener {
-
 		private JTextField textField;
+		ChangeColourDocumentListener(JTextField textField) { this.textField = textField; }
 
-		ChangeColourDocumentListener(JTextField textField) {
-			this.textField = textField;
-		}
-
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-			changeColour();
-
-		}
-
-		@Override
-		public void removeUpdate(DocumentEvent e) {
-			changeColour();
-
-		}
-
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-			changeColour();
-
-		}
+		@Override public void insertUpdate(DocumentEvent e) { changeColour(); }
+		@Override public void removeUpdate(DocumentEvent e) {changeColour(); }
+		@Override public void changedUpdate(DocumentEvent e) {changeColour(); }
 
 		private void changeColour() {
 			if (!coloursEntered && solverType == SolverType.PERCENT) {
-
 				switch (textField.getText()) {
-
-				case "1":
-					textField.setBackground(Color.gray);
-					break;
-				case "2":
-					textField.setBackground(Color.pink);
-					break;
-				case "3":
-					textField.setBackground(Color.magenta);
-					break;
-				case "4":
-					textField.setBackground(Color.green);
-					break;
-				case "5":
-					textField.setBackground(Color.cyan);
-					break;
-				case "6":
-					textField.setBackground(Color.yellow);
-					break;
-				case "7":
-					textField.setBackground(Color.magenta);
-					break;
-				case "8":
-					textField.setBackground(Color.GRAY);
-					break;
-				case "9":
-					textField.setBackground(Color.PINK);
-					break;
-				default:
-					textField.setBackground(Color.white);
-					break;
+					case "1": textField.setBackground(Color.gray); break;
+					case "2": textField.setBackground(Color.pink); break;
+					case "3": textField.setBackground(Color.magenta); break;
+					case "4": textField.setBackground(Color.green); break;
+					case "5": textField.setBackground(Color.cyan); break;
+					case "6": textField.setBackground(Color.yellow);break;
+					case "7": textField.setBackground(Color.magenta);break;
+					case "8": textField.setBackground(Color.GRAY); break;
+					case "9": textField.setBackground(Color.PINK); break;
+					default: textField.setBackground(Color.white); break;
 				}
-
 			}
-
 		}
-
 	}
 
+	
+	private void testTheUI() {
+		if (solverType == SolverType.NORMAL) {
+			inputValues.put(1, 7); inputValues.put(2, 9); inputValues.put(7, 3); inputValues.put(15, 6);
+			inputValues.put(16, 9); inputValues.put(19, 8);  inputValues.put(23, 3); inputValues.put(26, 7);
+			inputValues.put(27, 6); inputValues.put(33, 5); inputValues.put(36, 2); inputValues.put(39, 5);
+			inputValues.put(40, 4); inputValues.put(41, 1); inputValues.put(42, 8); inputValues.put(43, 7);
+			inputValues.put(46, 4); inputValues.put(49, 7); inputValues.put(55, 6); inputValues.put(56, 1);
+			inputValues.put(59, 9); inputValues.put(63, 8); inputValues.put(66, 2); inputValues.put(67, 3);
+			inputValues.put(75, 9); inputValues.put(80, 5); inputValues.put(81, 4);
+		} else {
+			inputValues.put(1, 1); inputValues.put(2, 6); inputValues.put(5, 7); inputValues.put(6, 9); inputValues.put(8, 8); inputValues.put(9, 4);
+			inputValues.put(10, 9); inputValues.put(11, 3); inputValues.put(15, 6); inputValues.put(17, 1);
+			// blank
+			inputValues.put(28, 8); inputValues.put(30, 1); inputValues.put(34, 6); inputValues.put(36, 5); 
+			inputValues.put(38, 7); inputValues.put(39, 3); inputValues.put(40, 1); inputValues.put(41, 5); inputValues.put(42, 8); inputValues.put(43, 4); inputValues.put(44, 9);
+			inputValues.put(46, 5); inputValues.put(48, 6); inputValues.put(51, 1); inputValues.put(54, 9);
+			inputValues.put(61, 1);
+			inputValues.put(67, 5); inputValues.put(71, 4); inputValues.put(72, 1);
+			inputValues.put(73, 3); inputValues.put(74, 1); inputValues.put(76, 9); inputValues.put(77, 4); inputValues.put(80, 6); inputValues.put(81, 8);	
+		}
+	}
+	
+	
 	/**
 	 * When the button is clicked it calls this method as this is its listener
 	 * 
@@ -158,33 +148,32 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 			// a value exists in the box.
 			for (JTextField field : listOfFields) {
 				if (!field.getText().isEmpty()) {
-					mapOfInputValues.put(x, Integer.parseInt(field.getText()));
+					inputValues.put(x, Integer.parseInt(field.getText()));
 				}
 				x++;
 			}
 
-			// check that the sudoku isnt already complete
-			if (mapOfInputValues.size() == 81) {
+			testTheUI();
+			
+			// Check that the Sudoku isnt already complete
+			if (inputValues.size() == 81) {
 				alert = "The sudoku has already been solved.";
 				alertLabel.setText(alert);
 			} else {
 
 				try {
 					// Solve the sudoku
-					int[][] solutionGrid = Executor2.executeForPercentGrid(mapOfInputValues, mapOfBoxLocations,
-							solverType);
+					List<Integer> solutionGrid = SudokuSolver.solveSudoku(inputValues, boxLocations, solverType);
 
 					// Populate the GUI grid with the values from the solution
 					// grid.
 					int counter = 1;
-					for (int i = 0; i <= 8; i++) {
-						for (int j = 0; j <= 8; j++) {
-							listOfFields.get(counter).setText(Integer.toString(solutionGrid[i][j]));
-							counter++;
-						}
+					for (counter = 1 ; counter <=81 ; counter ++) {
+						listOfFields.get(counter).setText(Integer.toString(solutionGrid.get(counter)));
 					}
 				} catch (Exception exception) {
 					alert = "There was a problem processing your sudoku";
+					exception.printStackTrace();
 					alertLabel.setText(alert);
 				}
 			}
@@ -192,8 +181,11 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 	}
 
 	
+	
+	/**
+	 * Clears all of the values in the boxes and clears the alerts.
+	 */
 	class ClearListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			alert = "";
@@ -208,11 +200,12 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 	}
 
 	
+	/**
+	 * When the solver type is toggled, changed the button on screen and colours in the boxes for regular sudoku. 
+	 */
 	class CheckBoxListener implements ItemListener {
-
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-
 			if (e.getSource() == isPercentCheckbox && isPercentCheckbox.isSelected()) {
 				solverType = SolverType.PERCENT;
 				enterPositionButton.setVisible(true);
@@ -224,41 +217,53 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 				solverType = SolverType.NORMAL;
 				int counter = 1;
 				for (JTextField textField : listOfFields) {
-
-					GridAccessService gridAccessService = new GridAccessService(null, solverType);
-					int currentBox = gridAccessService 
-							.findBoxCurrentPositionIsIn(GridAccessService.calculateGridPositionOfGridNumber(counter - 1));
+					int currentBox = GridAccessService.findBoxNumber(counter-1, solverType, boxLocations);
 					if (currentBox == 1 || currentBox == 3 || currentBox == 5 || currentBox == 7 || currentBox == 9) {
 						textField.setBackground(Color.LIGHT_GRAY);
 					}
 				counter ++;	
 				}
 				enterPositionButton.setVisible(false);
-
 			}
 		}
 	}
 
 	
+	/**
+	 * Stores the passed in box locations, and validates them.
+	 */
 	class InputBoxesListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
 			alert = "";
-			mapOfBoxLocations = new HashMap<Integer, Integer>();
 			int x = 0;
-
+			
+			// For testing, take the hardcoded stuff and type the numbers into the boxes
+			
+			boxLocations.put(1,1);boxLocations.put(2,1);boxLocations.put(3,1);boxLocations.put(4,1);boxLocations.put(5,2);boxLocations.put(6,3);boxLocations.put(7,3);boxLocations.put(8,3);boxLocations.put(9,3);
+			boxLocations.put(10,1);boxLocations.put(11,1);boxLocations.put(12,1);boxLocations.put(13,2);boxLocations.put(14,2);boxLocations.put(15,2);boxLocations.put(16,2);boxLocations.put(17,3);boxLocations.put(18,3);
+			boxLocations.put(19,1);boxLocations.put(20,4);boxLocations.put(21,4);boxLocations.put(22,2);boxLocations.put(23,5);boxLocations.put(24,5);boxLocations.put(25,2);boxLocations.put(26,6);boxLocations.put(27,3);
+			boxLocations.put(28,1);boxLocations.put(29,4);boxLocations.put(30,2);boxLocations.put(31,2);boxLocations.put(32,5);boxLocations.put(33,5);boxLocations.put(34,6);boxLocations.put(35,6);boxLocations.put(36,3);
+			boxLocations.put(37,7);boxLocations.put(38,4);boxLocations.put(39,4);boxLocations.put(40,4);boxLocations.put(41,5);boxLocations.put(42,6);boxLocations.put(43,6);boxLocations.put(44,6);boxLocations.put(45,3);
+			boxLocations.put(46,7);boxLocations.put(47,4);boxLocations.put(48,4);boxLocations.put(49,5);boxLocations.put(50,5);boxLocations.put(51,8);boxLocations.put(52,8);boxLocations.put(53,6);boxLocations.put(54,9);
+			boxLocations.put(55,7);boxLocations.put(56,4);boxLocations.put(57,8);boxLocations.put(58,5);boxLocations.put(59,5);boxLocations.put(60,8);boxLocations.put(61,6);boxLocations.put(62,6);boxLocations.put(63,9);
+			boxLocations.put(64,7);boxLocations.put(65,7);boxLocations.put(66,8);boxLocations.put(67,8);boxLocations.put(68,8);boxLocations.put(69,8);boxLocations.put(70,9);boxLocations.put(71,9);boxLocations.put(72,9);
+			boxLocations.put(73,7);boxLocations.put(74,7);boxLocations.put(75,7);boxLocations.put(76,7);boxLocations.put(77,8);boxLocations.put(78,9);boxLocations.put(79,9);boxLocations.put(80,9);boxLocations.put(81,9);
+			
+			for (int counter = 1 ; counter <= 81; counter ++) {
+				listOfFields.get(counter).setText(boxLocations.get(counter).toString());
+			}
+			
 			// Take all the values from the each box and store them in a map if
 			// a value exists in the box.
 			for (JTextField field : listOfFields) {
 				if (!field.getText().isEmpty()) {
-					mapOfBoxLocations.put(x, Integer.parseInt(field.getText()));
+					boxLocations.put(x, Integer.parseInt(field.getText()));
 				}
 				x++;
 			}
 
-			if (mapOfBoxLocations.keySet().size() != 81) {
+			if (boxLocations.keySet().size() != 81) {
 				alert = "You havent entered numbers in all the boxes!";
 				alertLabel.setText(alert);
 			}
@@ -274,9 +279,10 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 
 		}
 
+		
 		private boolean checkThereAre9OfEachNumber() {
 			int counter = 0;
-			Collection<Integer> values = mapOfBoxLocations.values();
+			Collection<Integer> values = boxLocations.values();
 			for (Integer number : values) {
 				counter = counter + number;
 			}

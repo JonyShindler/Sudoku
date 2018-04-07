@@ -2,13 +2,12 @@ package logic;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
-
-import logic.GridAccessService.GridPosition;
 
 /**
  * 
@@ -18,12 +17,10 @@ import logic.GridAccessService.GridPosition;
  */
 public class SolverService {
 
-	private static final GridPosition START_POSITION = new GridPosition(0, 0);
-	
-	public int[][] solveSudoku(int[][] knownSafeGrid, 
-							  int[][] initialGrid, 
-							  Map<Integer, Integer> mapOfBoxPositions, 
-							  SolverType solverType) {
+	public List<Integer> solveSudoku(List<Integer> knownSafeGrid, 
+							   List<Integer> initialGrid, 
+							   Map<Integer, Integer> mapOfBoxPositions, 
+							   SolverType solverType) {
 
 		SolverTask solverTask = new SolverTask(knownSafeGrid, initialGrid, mapOfBoxPositions, solverType);
 
@@ -36,13 +33,13 @@ public class SolverService {
 		}
 	}
 	
-	class SolverTask implements Callable<int[][]> {
-		int[][] knownSafeGrid;
-		int[][] initialGrid;
+	class SolverTask implements Callable<List<Integer>> {
+		List<Integer> knownSafeGrid;
+		List<Integer> initialGrid;
 		Map<Integer, Integer> mapOfBoxPositions;
 		SolverType solverType;
 		
-		SolverTask(int[][] knownSafeGrid, int[][] initialGrid, Map<Integer, Integer> mapOfBoxPositions, SolverType solverType){
+		SolverTask(List<Integer> knownSafeGrid, List<Integer> initialGrid, Map<Integer, Integer> mapOfBoxPositions, SolverType solverType){
 			this.knownSafeGrid = knownSafeGrid;
 			this.initialGrid = initialGrid;
 			this.mapOfBoxPositions = mapOfBoxPositions;
@@ -50,7 +47,7 @@ public class SolverService {
 		}
 		
 	    @Override
-	    public int[][] call() throws TimeoutException {
+	    public List<Integer> call() throws TimeoutException {
 			return solveSudokuPrivate(knownSafeGrid, initialGrid, mapOfBoxPositions, solverType);
 	    }
 	}
@@ -62,52 +59,47 @@ public class SolverService {
 	 * @param mapOfBoxPositions - the map of box positions (for solving)
 	 * @return the solved grid
 	 */
-	public static int[][] solveSudokuPrivate(int[][] knownSafeGrid, int[][] initialGrid, Map<Integer, Integer> mapOfBoxPositions, SolverType solverType) {
-		final GridAccessService gridServices = new GridAccessService(mapOfBoxPositions, solverType);
-		final ValidValueService validValueService = new ValidValueService(gridServices);
-		int i,j=0;
+	public static List<Integer> solveSudokuPrivate(List<Integer> knownSafeGrid, 
+												   List<Integer> initialGrid, 
+												   Map<Integer, Integer> mapOfBoxPositions, 
+												   SolverType solverType) {
 		int proposedValue=1;
 	
-		// Need to use the new grid each time.
-		for (i=0; i<=8;i++){
-			for (j=0; j<=8;j++){
-				
-				// If a cell is empty then we can put a number in it
-				if(validValueService.isEmpty(j, i, knownSafeGrid)){
-					// Find the lowest valid value to put in the current box
-					proposedValue = validValueService.findLowestValue(i, j, proposedValue, validValueService, knownSafeGrid, 1);
-					// Add the proposed value to the grid
-					knownSafeGrid[i][j] = proposedValue;
-				}
-					// If there was no valid match then backtrack and change the previous number
-					while (proposedValue==0){
-						
-						GridPosition currentPosition = new GridPosition(i, j);
-						GridPosition previousPosition = gridServices.backtrackToPreviousCell(currentPosition);
-						i = previousPosition.getiValue();
-						j = previousPosition.getjValue();
-						int previousPositionValue = knownSafeGrid[i][j];
-					
-						// If the value in the cell of the current position is the same as the input grid, then we cannot change it
-						if (knownSafeGrid[i][j] == initialGrid[i][j]){
-							continue;
-						}
-						
-						// This means we have expired all options so set the value to 0 so it can get overwritten
-						if (previousPositionValue == 9){
-							knownSafeGrid[i][j] = 0;
-						}
-						
-						proposedValue = validValueService.findLowestValue(i, j, proposedValue, validValueService, knownSafeGrid, previousPositionValue+1);
-						if (proposedValue == 0) {
-							if (previousPosition != START_POSITION){
-								knownSafeGrid[i][j] = 0;
-							}
-						} else {
-							knownSafeGrid[i][j] = proposedValue;
-						}
-					}
+		for (int indexLoop = 1 ; indexLoop <=81 ; indexLoop++) {
+			if(ValidValueService.isEmpty(indexLoop, knownSafeGrid)){
+				// Find the lowest valid value to put in the current box
+				proposedValue = ValidValueService.findLowestValue(indexLoop, proposedValue, knownSafeGrid, 1, solverType, mapOfBoxPositions);
+				// Add the proposed value to the grid
+				knownSafeGrid.set(indexLoop, proposedValue);
 			}
+			
+			while (proposedValue==0){
+				//This needs to decrease each time. and it doesnt work with the loop so well. cos it will just
+				//restart from the same index loop we were on. so we need to decrease it.
+				indexLoop--;
+				int previousPositionValue = knownSafeGrid.get(indexLoop);
+			
+				// If the value in the cell of the current position is the same as the input grid, then we cannot change it
+				if (knownSafeGrid.get(indexLoop) == initialGrid.get(indexLoop)){
+					continue;
+				}
+				
+				// Otherwise we have expired all options so set the value to 0 so it can get overwritten
+				if (previousPositionValue == 9){
+					knownSafeGrid.set(indexLoop, 0);
+				}
+				
+				// Attempt to increment the previous cell.
+				proposedValue = ValidValueService.findLowestValue(indexLoop, proposedValue, knownSafeGrid, previousPositionValue+1, solverType, mapOfBoxPositions);
+				if (proposedValue == 0) {
+					if (indexLoop-1 != 1){
+						knownSafeGrid.set(indexLoop, 0);
+					}
+				} else {
+					knownSafeGrid.set(indexLoop, proposedValue);
+				}
+			}
+			
 		}
 		
 		return knownSafeGrid;

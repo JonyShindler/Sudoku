@@ -1,5 +1,10 @@
 package gui;
 
+import static logic.ValidValueService.findColumnNumber;
+import static logic.ValidValueService.findRowNumber;
+
+import java.util.List;
+
 /**
  * 
  * Service to output the solution to the console
@@ -8,40 +13,33 @@ package gui;
  */
 public class PrinterService {
 
-	/**Prints each row to the console with a big grid lines
-	 * @param row
+	/**
+	 * Prints the entire grid to the console
 	 */
-	private static void printRowWithLines(int[] row) {
-		// Take each element in the row and print it and then print a tab.
-		int counter = 0;
-		for (int i : row) {
-			
-			if (counter == 3 || counter == 6){
-				System.out.print("|");
-				System.out.print(i);
-			} else {
-				System.out.print(" ");
-				System.out.print(i);
-			}
-			counter ++;
-		}
-		System.out.println();
-	}
-	
-	
-	/**Prints the entire grid to the console
-	 * @param knownSafeGrid
-	 */
-	public static void printToConsole(int[][] knownSafeGrid) {
-		int counter = 0;
-		for(int[] row : knownSafeGrid) {
-			if (counter == 3 ||counter ==6){
-				System.out.print(" -----------------");
+	public static void printToConsole(List<Integer> solvedGrid) {
+		System.out.print(" ");
+		for(int counter = 1 ; counter <= 81;counter ++) {
+			System.out.print(solvedGrid.get(counter));
+			if (findColumnNumber(counter) == 9){
+				if (findRowNumber(counter) == 3 || findRowNumber(counter) == 6){
+					System.out.println();
+					System.out.print(" -----------------");
+				}
 				System.out.println();
 			}
-            printRowWithLines(row);
-            counter++;
+			
+			if (findColumnNumber(counter) == 3 || findColumnNumber(counter) == 6){
+				System.out.print("|");
+			} else {
+				System.out.print(" ");
+			}
+			
+			
 		}
+		System.out.println();
+		System.out.println();
+		System.out.println();
+
 	}
 	
 }
