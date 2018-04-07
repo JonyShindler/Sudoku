@@ -41,11 +41,17 @@ public class SudokuSolver {
 	}
 	
 	
-	public static List<Integer> solveSudoku(Map<Integer, Integer> mapOfInputValues, //key = index position, value = value number
-													  Map<Integer, Integer> mapOfBoxPositions, //key = index position, value = box number
+	/**
+	 * @param inputValues the known starting values, keyed by their index (1 - 81)
+	 * @param boxPositions can be null for standard sudoku. the box numbers (1-9) keyed by their index (1-81)
+	 * @param solverType indicates which sudoku type is being solved.
+	 * @return
+	 */
+	public static List<Integer> solveSudoku(Map<Integer, Integer> inputValues, //key = index position, value = value number
+													  Map<Integer, Integer> boxPositions, //key = index position, value = box number
 													  SolverType solverType) {
 		
-		List<Integer> solutionGrid = solveForGUI(mapOfInputValues, mapOfBoxPositions, solverType);
+		List<Integer> solutionGrid = solveForGUI(inputValues, boxPositions, solverType);
 		
 		//Output result to the console
 		PrinterService.printToConsole(solutionGrid);
@@ -55,14 +61,14 @@ public class SudokuSolver {
 	}
 
 
-	private static List<Integer> solveForGUI(Map<Integer, Integer> mapOfInputValues, 
-											 Map<Integer, Integer> mapOfBoxPositions, 
+	private static List<Integer> solveForGUI(Map<Integer, Integer> inputValues, 
+											 Map<Integer, Integer> boxPositions, 
 											 SolverType solverType) {
 		// Give this service the input values and get it to give us back something.
-		List<Integer> inputtedGrid = createListFromInputMap(mapOfInputValues);
+		List<Integer> inputtedGrid = createListFromInputMap(inputValues);
 		// Working grid is a replica of the input grid by the UI.
-		List<Integer> workingGrid = createListFromInputMap(mapOfInputValues);
-		List<Integer> solutionGrid = new SolverService().solveSudoku(workingGrid, inputtedGrid, mapOfBoxPositions, solverType);
+		List<Integer> workingGrid = createListFromInputMap(inputValues);
+		List<Integer> solutionGrid = new SolverService().solveSudoku(workingGrid, inputtedGrid, boxPositions, solverType);
 		return solutionGrid;
 	}
 
