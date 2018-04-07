@@ -18,7 +18,7 @@ public class PrinterService {
 	 */
 	public static void printToConsole(List<Integer> solvedGrid) {
 		System.out.print(" ");
-		for(int counter = 1 ; counter <= 81;counter ++) {
+		for(int counter = 1 ; counter <= 81; counter ++) {
 			System.out.print(solvedGrid.get(counter));
 			if (findColumnNumber(counter) == 9){
 				if (findRowNumber(counter) == 3 || findRowNumber(counter) == 6){

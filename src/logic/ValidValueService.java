@@ -1,7 +1,12 @@
 package logic;
 
+import static logic.GridAccessService.findBoxNumber;
+import static logic.GridAccessService.findValuesInCurrentBox;
+
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 
@@ -38,14 +43,16 @@ public class ValidValueService {
 			}
 		}
 		return true;
+		
+//		return !IntStream.range(1, grid.size()-1)
+//				.boxed()
+//				.anyMatch(i -> rowNumberAndValueMatch(proposedValue, indexInList, grid, i));
 	}
 
-
-	/**
-	 * @return the row number the index appears in, with the 1 to 9 row numbering.
-	 */
-	public static int findRowNumber(int indexInList) {
-		return (int)Math.ceil((indexInList-1)/9) + 1;
+	private static boolean rowNumberAndValueMatch(int proposedValue, int indexInList, List<Integer> grid, Integer i) {
+		return findRowNumber(i) == findRowNumber(indexInList) 
+				&& grid.get(i) != null 
+				&& grid.get(i) == proposedValue;
 	}
 	
 	
@@ -54,20 +61,27 @@ public class ValidValueService {
 	 * @return true is the proposed value is valid in its column.
 	 */
 	public static boolean isColumnValid(int proposedValue, int indexInList, List<Integer> grid){
-		int columnNumber = findColumnNumber(indexInList);
-		
-		for (int i = 1 ; i <= grid.size()-1 ; i++) {
-			int currentRowInLoop = findColumnNumber(i);
-			if (currentRowInLoop == columnNumber
-					&& grid.get(i) != null
-					&& grid.get(i) == proposedValue) {
-				return false;
-			}
-		}
-		return true;
+		return !IntStream.range(1, grid.size()-1)
+				.boxed()
+				.anyMatch(i -> columnNumberAndValueMatch(proposedValue, indexInList, grid, i));
 	}
 
 
+	private static boolean columnNumberAndValueMatch(int proposedValue, int indexInList, List<Integer> grid, Integer i) {
+		return findColumnNumber(i) == findColumnNumber(indexInList) 
+					   && grid.get(i) != null 
+					   && grid.get(i) == proposedValue;
+	}
+	
+	
+	/**
+	 * @return the row number the index appears in, with the 1 to 9 row numbering.
+	 */
+	public static int findRowNumber(int indexInList) {
+		return (int)Math.ceil((indexInList-1)/9) + 1;
+	}
+	
+	
 	/**
 	 * @return the column number the index appears in, with the 1 to 9 row numbering.
 	 */
@@ -82,12 +96,8 @@ public class ValidValueService {
 									 List<Integer> grid, 
 									 SolverType solverType, 
 									 Map<Integer, Integer> mapOfBoxPositions){
-		// Work out which box the grid position is in
-		int currentBox = GridAccessService.findBoxNumber(indexInList, solverType, mapOfBoxPositions);
-		// Then find the list of all numbers that are currently in the box
-		List<Integer> listInBox = GridAccessService.findValuesInCurrentBox(currentBox, grid, solverType, mapOfBoxPositions);
-		// Then return true if the proposed value is valid (i.e. it does not exist in the box)
-		return !listInBox.contains(proposedValue);
+		int currentBox = findBoxNumber(indexInList, solverType, mapOfBoxPositions);
+		return !findValuesInCurrentBox(currentBox, grid, solverType, mapOfBoxPositions).contains(proposedValue);
 	}
 	
 	
@@ -103,46 +113,20 @@ public class ValidValueService {
 	
 	
 	/**
-	 * @param grid
-	 * @return true if grid is full (i.e. it doesnt contain any zeros) then return true. If it contains any zeros in it then the sudoku will be solved.
-	 * 
-	 */
-	@Deprecated
-	//TODO this is just for the UI, can be sorted out later
-	public static boolean isGridFull(int[][] grid){
-		for (int i = 0; i<=8; i++){
-			for (int j=0; j<=8; j++){
-				if (grid[i][j]==0){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
-	
-	/**
 	 * Returns the lowest valid number to go in a specified grid position
 	 * 
-	 * @param i
-	 * @param j
-	 * @param proposedValue
-	 * @param valueValidService
-	 * @param knownSafeGrid
-	 * @param startNumber
 	 * @return the lowest valid number to go in a grid position
 	 */
 	public static int findLowestValue(int index, 
-									  int proposedValue, 
 									  List<Integer> knownSafeGrid, 
 									  int startNumber, 
 									  SolverType solverType, 
 									  Map<Integer, Integer> mapOfBoxPositions) {
-		// Work out which is the lowest number that we can out in here.
+		// Start at the startNumber and increment until a value is found.
 		for (int x=startNumber; x<=9; x++){
 			// If the number is valid then set this as the proposed value
-			if (ValidValueService.isValid(x, index, knownSafeGrid, solverType, mapOfBoxPositions)){
-				return proposedValue = x;
+			if (isValid(x, index, knownSafeGrid, solverType, mapOfBoxPositions)){
+				return x;
 			}
 		}
 		return 0;

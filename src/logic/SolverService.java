@@ -68,7 +68,7 @@ public class SolverService {
 		for (int indexLoop = 1 ; indexLoop <=81 ; indexLoop++) {
 			if(ValidValueService.isEmpty(indexLoop, knownSafeGrid)){
 				// Find the lowest valid value to put in the current box
-				proposedValue = ValidValueService.findLowestValue(indexLoop, proposedValue, knownSafeGrid, 1, solverType, mapOfBoxPositions);
+				proposedValue = ValidValueService.findLowestValue(indexLoop, knownSafeGrid, 1, solverType, mapOfBoxPositions);
 				// Add the proposed value to the grid
 				knownSafeGrid.set(indexLoop, proposedValue);
 			}
@@ -90,7 +90,7 @@ public class SolverService {
 				}
 				
 				// Attempt to increment the previous cell.
-				proposedValue = ValidValueService.findLowestValue(indexLoop, proposedValue, knownSafeGrid, previousPositionValue+1, solverType, mapOfBoxPositions);
+				proposedValue = ValidValueService.findLowestValue(indexLoop, knownSafeGrid, previousPositionValue+1, solverType, mapOfBoxPositions);
 				if (proposedValue == 0) {
 					if (indexLoop-1 != 1){
 						knownSafeGrid.set(indexLoop, 0);

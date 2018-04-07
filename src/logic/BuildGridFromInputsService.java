@@ -10,7 +10,6 @@ import java.util.Map;
  * @author Jony
  */
 public class BuildGridFromInputsService {
-
 	/** 
 	 * Creates a list with 82 entries, where the zeroth is null.
 	 * Any values provided by the UI are set in the list in their correct index.
@@ -19,7 +18,6 @@ public class BuildGridFromInputsService {
 	 * @return
 	 */
 	public static List<Integer> createListFromInputMap(Map<Integer, Integer> map){
-		// create an 82 length list of nulls? could use 0 otherwise...
 		List<Integer> grid = new ArrayList<>(82);
 		for (int i = 0 ; i <= 81 ; i++) {
 			grid.add(null);

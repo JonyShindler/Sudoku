@@ -1,8 +1,8 @@
-/*
- * Created by JFormDesigner on Fri Mar 10 20:40:30 GMT 2017
- */
-
 package gui;
+
+import static java.awt.Color.LIGHT_GRAY;
+import static java.awt.Color.WHITE;
+import static logic.SolverType.PERCENT;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,10 +10,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -25,10 +26,6 @@ import logic.SolverType;
 
 /**
  * @author Jonathan Shindler
- */
-/**
- * @author Jony
- *
  */
 public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 
@@ -47,32 +44,25 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 	private Map<Integer, Integer> inputValues = new HashMap<Integer, Integer>();
 	private JCheckBox isPercentCheckbox = new JCheckBox();
 	private SolverType solverType = SolverType.NORMAL;
+	private Set<Integer> greySet = new HashSet<Integer>(); 
 
 	/**
-	 * Initialised all the boxes and sets their colour to the alternating grey pattern.
+	 * Initialise all the boxes and sets their colour to the alternating grey pattern.
 	 */
 	public BoxesWith3ButtonsForMultiEntry() {
 		counter = 1;
 		listOfFields = new ArrayList<JTextField>();
+		greySet.add(1); greySet.add(3); greySet.add(5); greySet.add(7); greySet.add(9);      
+
+		initialise81Boxes();
 		
-		for (int i = 1; i <= 82; i++) {
-			JTextField textField = new JTextField();
-			textField.getDocument().addDocumentListener(new ChangeColourDocumentListener(textField));
-			
-			//as we make them we want to define their colour...
-			int currentBox = GridAccessService.findBoxNumber(i-1, solverType, boxLocations);
-			if (currentBox == 1 || currentBox == 3 || currentBox == 5 || currentBox == 7 || currentBox == 9){
-				textField.setBackground(Color.LIGHT_GRAY);
-			}
-			
-			listOfFields.add(textField);
-		}
 		initComponents(panel);
 		enterPositionButton.setVisible(false);
 		add(panel);
 	}
 
-	
+
+
 	/**
 	 * Updates the colours of the UI boxes for the percent sudoku.
 	 */
@@ -137,21 +127,14 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 	 *
 	 */
 	class SolverListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			alert = "";
 			alertLabel.setText(alert);
-			int x = 0;
 
 			// Take all the values from the each box and store them in a map if
 			// a value exists in the box.
-			for (JTextField field : listOfFields) {
-				if (!field.getText().isEmpty()) {
-					inputValues.put(x, Integer.parseInt(field.getText()));
-				}
-				x++;
-			}
+			storeAllInputValues();
 
 			testTheUI();
 			
@@ -160,22 +143,34 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 				alert = "The sudoku has already been solved.";
 				alertLabel.setText(alert);
 			} else {
+				solveTheSudoku();
+			}
+		}
 
-				try {
-					// Solve the sudoku
-					List<Integer> solutionGrid = SudokuSolver.solveSudoku(inputValues, boxLocations, solverType);
-
-					// Populate the GUI grid with the values from the solution
-					// grid.
-					int counter = 1;
-					for (counter = 1 ; counter <=81 ; counter ++) {
-						listOfFields.get(counter).setText(Integer.toString(solutionGrid.get(counter)));
-					}
-				} catch (Exception exception) {
-					alert = "There was a problem processing your sudoku";
-					exception.printStackTrace();
-					alertLabel.setText(alert);
+		private void storeAllInputValues() {
+			int x = 0;
+			for (JTextField field : listOfFields) {
+				if (!field.getText().isEmpty()) {
+					inputValues.put(x, Integer.parseInt(field.getText()));
 				}
+				x++;
+			}
+		}
+
+		private void solveTheSudoku() {
+			try {
+				// Solve the sudoku
+				List<Integer> solutionGrid = SudokuSolver.solveSudoku(inputValues, boxLocations, solverType);
+
+				// Populate the GUI grid with the values from the solution grid.
+				int counter = 1;
+				for (counter = 1 ; counter <=81 ; counter ++) {
+					listOfFields.get(counter).setText(Integer.toString(solutionGrid.get(counter)));
+				}
+			} catch (Exception exception) {
+				alert = "There was a problem processing your sudoku";
+				exception.printStackTrace();
+				alertLabel.setText(alert);
 			}
 		}
 	}
@@ -191,8 +186,6 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 			alert = "";
 			alertLabel.setText(alert);
 			
-			// Take all the values from the each box and store them in a map if
-			// a value exists in the box.
 			for (JTextField field : listOfFields) {
 				field.setText("");
 			}
@@ -207,10 +200,10 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getSource() == isPercentCheckbox && isPercentCheckbox.isSelected()) {
-				solverType = SolverType.PERCENT;
+				solverType = PERCENT;
 				enterPositionButton.setVisible(true);
 				for (JTextField field : listOfFields) {
-					field.setBackground(Color.WHITE);
+					field.setBackground(WHITE);
 				}
 
 			} else {
@@ -218,8 +211,8 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 				int counter = 1;
 				for (JTextField textField : listOfFields) {
 					int currentBox = GridAccessService.findBoxNumber(counter-1, solverType, boxLocations);
-					if (currentBox == 1 || currentBox == 3 || currentBox == 5 || currentBox == 7 || currentBox == 9) {
-						textField.setBackground(Color.LIGHT_GRAY);
+					if (greySet.contains(currentBox)) {
+						textField.setBackground(LIGHT_GRAY);
 					}
 				counter ++;	
 				}
@@ -239,7 +232,6 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 			int x = 0;
 			
 			// For testing, take the hardcoded stuff and type the numbers into the boxes
-			
 			boxLocations.put(1,1);boxLocations.put(2,1);boxLocations.put(3,1);boxLocations.put(4,1);boxLocations.put(5,2);boxLocations.put(6,3);boxLocations.put(7,3);boxLocations.put(8,3);boxLocations.put(9,3);
 			boxLocations.put(10,1);boxLocations.put(11,1);boxLocations.put(12,1);boxLocations.put(13,2);boxLocations.put(14,2);boxLocations.put(15,2);boxLocations.put(16,2);boxLocations.put(17,3);boxLocations.put(18,3);
 			boxLocations.put(19,1);boxLocations.put(20,4);boxLocations.put(21,4);boxLocations.put(22,2);boxLocations.put(23,5);boxLocations.put(24,5);boxLocations.put(25,2);boxLocations.put(26,6);boxLocations.put(27,3);
@@ -276,19 +268,12 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 			if (alert.equals("")) {
 				coloursEntered = true;
 			}
-
 		}
 
 		
 		private boolean checkThereAre9OfEachNumber() {
-			int counter = 0;
-			Collection<Integer> values = boxLocations.values();
-			for (Integer number : values) {
-				counter = counter + number;
-			}
-			return counter == 405;
+			return boxLocations.values().stream().mapToInt(i -> i).sum() == 405;
 		}
-
 	}
 
 	
@@ -296,7 +281,6 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 	 * Calculates the JTextField for each box when they are initialised from the
 	 * list
 	 * 
-	 * @return JTextField
 	 */
 	private static JTextField returnTextField() {
 		if (counter > 81) {
@@ -310,16 +294,29 @@ public class BoxesWith3ButtonsForMultiEntry extends JFrame {
 
 	
 	/**
-	 * Builds 81 boxes and a solve button.
+	 * Initialise all the boxes and give them a colour if necessary.
+	 */
+	private void initialise81Boxes() {
+		for (int i = 1; i <= 82; i++) {
+			JTextField textField = new JTextField();
+			textField.getDocument().addDocumentListener(new ChangeColourDocumentListener(textField));
+			
+			int currentBox = GridAccessService.findBoxNumber(i-1, solverType, boxLocations);
+			if (greySet.contains(currentBox)){
+				textField.setBackground(LIGHT_GRAY);
+			}
+			
+			listOfFields.add(textField);
+		}
+	}
+	
+	/**
+	 * Builds 81 boxes and solve button.
 	 * 
 	 * @param panel
 	 *            the panel to apply the boxes to
 	 */
 	private void initComponents(JPanel panel) {
-		// JFormDesigner - Component initialization - DO NOT MODIFY
-		// //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner Evaluation license - Jonathan Shindler
-
 		solveButton = new JButton();
 		clearButton = new JButton();
 		enterPositionButton = new JButton();
